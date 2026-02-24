@@ -298,18 +298,27 @@ while True:
         # automated rolling for a number of cases with optional delay
         try:
             count = int(input("How many cases should I open while you're AFK? "))
+            if count <= 0:
+                print("Please enter a positive number of cases.")
+                continue
         except ValueError:
             print("That wasn't a valid number.")
+            continue
         else:
             try:
                 delay = float(input("Delay between each roll in seconds (e.g. 0.5): "))
                 if delay == 0:
-                    verify = input("Type 'y' if you are sure you want no delay between rolls (this may cause issues on slower machines) and type 'n' if no: ")
-                    if verify.lower() != 'y':
-                        delay = 0
-                    elif verify.lower() == 'n':
-                        print("exiting AFK mode.")
+                    verify = input(
+                        "Type 'y' if you are sure you want no delay between rolls "
+                        "(this may cause issues on slower machines) and 'n' to cancel: "
+                    ).strip().lower()
+                    if verify == 'n':
+                        print("Exiting AFK mode.")
                         continue
+                    elif verify != 'y':
+                        # anything else is unexpected – fall back to safe default
+                        print("Unrecognized response; using default delay of 0.5s.")
+                        delay = 0.5
             except ValueError:
                 delay = 0.5
             print(f"Rolling {count} cases automatically...")
@@ -348,6 +357,17 @@ while True:
     elif action == "7":
         show_money()
 
+    elif action == "8":
+        # open the directory containing the save file so user can inspect it
+        folder = os.path.abspath(os.path.dirname(SAVE_FILE) or ".")
+        try:
+            # 'os.startfile' works on Windows to open in explorer
+            os.startfile(folder)
+            print(f"Opened folder: {folder}")
+        except Exception as e:
+            print(f"Unable to open folder automatically: {e}")
+        
+
     elif action == "dev":
         developer_password = "Kane_rock17yt"
         pwd = input("Enter developer password: ")
@@ -380,12 +400,12 @@ while True:
                 print("Developer Case contains:")
                 for item in devCase:
                     print(f"- {item}")
-                if input("Add any to inventory? (yes/no): ").lower() == "yes":
-                    item_name = "--+--=?!@#--" + input("Enter the name of the item to add: ") + "--?!@#=--+--"
-                    if item_name in devCase:
-                        current_inv.append(item_name)
+                if input("Add any to inventory? (yes/no): ").strip().lower() == "yes":
+                    choice = input("Enter the exact item string to add (copy from above): ").strip()
+                    if choice in devCase:
+                        current_inv.append(choice)
                         log_inventory()
-                        print(f"Added {item_name} to inventory.")
+                        print(f"Added {choice} to inventory.")
                     else:
                         print("Item not found in Developer Case.")
             elif actiondev == "5":
