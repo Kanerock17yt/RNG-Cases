@@ -106,6 +106,9 @@ def get_item_price(item):
         if "Netherite" in item:
             return 500
         return 200
+    if item in EpicCase:
+        # epic case items are extremely valuable
+        return 50000
     if item in devCase:
         return 10000
     # fallback for unknown items
@@ -189,6 +192,21 @@ RareCase = [
 RareWeights = [10, 10, 10, 10, 10, 5, 5, 20, 2, 0.01]
 RARE_DROP_CHANCE = 0.1  # 10% by default
 
+EpicCase = [
+    "--+--=?!@#--Epic Hat--?!@#=--+--", # 0.01%
+    "--+--=?!@#--Epic Chestplate--?!@#=--+--", # 0.01%
+    "--+--=?!@#--Epic Gloves--?!@#=--+--", # 0.01%
+    "--+--=?!@#--Epic Pants--?!@#=--+--", # 0.01%
+    "--+--=?!@#--Epic Boots--?!@#=--+--", # 0.01%
+    "--+--=?!@#--Epic Sword--?!@#=--+--", # 0.001%
+    "--+--=?!@#--Epic Shield--?!@#=--+--", # 0.01%
+    "--+--=?!@#--Epic Bow--?!@#=--+--", # 0.01%
+    "--+--=?!@#--Epic Axe--?!@#=--+--", # 0.0001%
+    "--+--=?!@#--Epic Spear--?!@#=--+--" # 0.00001%
+]
+EpicWeights = [0.01, 0.01, 0.01, 0.01, 0.01, 0.001, 0.01, 0.01, 0.0001, 0.00001]
+EPIC_DROP_CHANCE = 0.01  # 1% by default
+
 devCase = [
     "--+--=?!@#--Developer Hat--?!@#=--+--",
     "--+--=?!@#--Developer Chestplate--?!@#=--+--",
@@ -254,8 +272,11 @@ select_user()
 # helper to open a single random case and handle inventory/secrets
 
 def open_random_case():
-    # choose common or rare
-    if random.random() < RARE_DROP_CHANCE:
+    # choose epic, rare, or common
+    if random.random() < EPIC_DROP_CHANCE:
+        item = random.choices(EpicCase, weights=EpicWeights, k=1)[0]
+        print(f"LEGENDARY! You pulled from the EPIC Case and received: {item}!")
+    elif random.random() < RARE_DROP_CHANCE:
         item = random.choices(RareCase, weights=RareWeights, k=1)[0]
         print(f"Lucky you! You pulled from the Rare Case and received: {item}!")
     else:
@@ -376,11 +397,11 @@ while True:
         else:
             print("Developer mode: Activated!")
             actiondev = input(
-                "Enter developer action (1:add item, 2:remove item, 3:show inventory, 4:dev case, 5:add secret, 6:modify money): "
+                "Enter developer action (1:add item, 2:remove item, 3:show inventory, 4:dev case, 5:add secret, 6:modify money, 7:epic case): "
             )
             if actiondev == "1":
                 new_item = input("Enter the name of the item to add: ")
-                if new_item not in Case1 + Case2 + Case3 + Case4 + RareCase + devCase:
+                if new_item not in Case1 + Case2 + Case3 + Case4 + RareCase + EpicCase + devCase:
                     print("Item not found!")
                 else:
                     current_inv.append(new_item)
@@ -423,6 +444,18 @@ while True:
                     user_data[current_user]["money"] = current_money
                     save_progress()
                     print(f"Money balance set to {current_money} coins.")
+            elif actiondev == "7":
+                print("Epic Case contains:")
+                for item in EpicCase:
+                    print(f"- {item}")
+                if input("Add any to inventory? (yes/no): ").strip().lower() == "yes":
+                    choice = input("Enter the exact item string to add (copy from above): ").strip()
+                    if choice in EpicCase:
+                        current_inv.append(choice)
+                        log_inventory()
+                        print(f"Added {choice} to inventory.")
+                    else:
+                        print("Item not found in Epic Case.")
 
     else:
         print("Invalid input, please try again.")
