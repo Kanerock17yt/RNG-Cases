@@ -1,3 +1,3 @@
 @echo off
-"%~dp0\RNG_Cases.py" %*
-pause
+start "" "%~dp0\RNG_Cases.py" %*
+exit
