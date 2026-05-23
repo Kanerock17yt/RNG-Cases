@@ -2,6 +2,9 @@ import time
 import os
 import random
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def clear():
     if os.name == 'nt':
@@ -532,7 +535,7 @@ while True:
     elif action == "sellall":
         sell_all_items()
     elif action == "dev":
-        developer_password = "Kane_rock17yt"
+        developer_password = os.getenv("DEV_PASS")
         pwd = input("Enter developer password: ")
         if pwd != developer_password:
             print("Incorrect password. Developer mode denied.")
