@@ -9,3 +9,7 @@ This is a game in the terminal made in python.
 1. go to the [releases](https://github.com/Kanerock17yt/RNG-Cases/releases)
 2. click on the newest release
 3. click on the .zip and it should be downloaded/downloading.
+
+## How to run this game
+open the run.bat and enter your username and there should be a progress_data.json generated.
+You can always change the stats in the progress_data.json to lower or higher stats if you want.
